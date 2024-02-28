@@ -28,7 +28,7 @@ import joblib, os
 import pandas as pd
 
 # Vectorizer
-news_vectorizer = open("resources/tfidfvect.pkl", "rb")
+news_vectorizer = open("resources/count_vectorizer.pkl", "rb")
 tweet_cv = joblib.load(news_vectorizer)  # loading your vectorizer from the pkl file
 
 # Load your raw data
@@ -60,15 +60,20 @@ def main():
 
     # Building out the prediction page
     if selection == "Prediction":
-        st.info("Prediction with ML Models")
+        st.info("Prediction with our Machine Learning Models")
         # Creating a text box for user input
         tweet_text = st.text_area("Enter Text", "Type Here")
+
+         # Model selection
+        model_options = ["Logistic_Regression", "*To be named*", "*To be named*"]
+        model_choice = st.selectbox("Select Model", model_options)
+
 
         if st.button("Classify"):
             # Transforming user input with vectorizer
             vect_text = tweet_cv.transform([tweet_text]).toarray()
             # Load your .pkl file with the model of your choice + make predictions
-            predictor = joblib.load(open(os.path.join("resources/Logistic_regression.pkl"), "rb"))
+            predictor = joblib.load(open(os.path.join("resources/logistic_regression_model.pkl"), "rb"))
             prediction = predictor.predict(vect_text)
 
             # When model has successfully run, will print prediction
