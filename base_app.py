@@ -27,6 +27,10 @@ import joblib, os
 # Data dependencies
 import pandas as pd
 
+
+
+
+
 # Vectorizer
 news_vectorizer = open("resources/tfidfvect.pkl", "rb")
 tweet_cv = joblib.load(news_vectorizer)  # loading your vectorizer from the pkl file
@@ -74,11 +78,33 @@ def main():
             # When model has successfully run, will print prediction
             st.success("Text Categorized as: {}".format(prediction))
 
-    # Handle the new "About" selection
+
+    
+
+            # Handle the new "About" selection
     if selection == "About":
+        
+        st.title('Company Information')
+    
+        # Display company logo
+        logo_path = "resources/imgs/logo.jpg"
+        st.image(logo_path, caption='Company Logo', use_column_width=True)
+
+    
+        st.subheader('About Us')
+    
+        # Display company description using st.text() or st.markdown()
+        company_description = ("Our company is dedicated to reducing environmental impact and promoting sustainability. We offer a range of products and services designed to help individuals and businesses lessen their carbon footprint and contribute to a greener future.")
+        st.markdown(company_description)
+    
+        
+
         st.title("About This App")
         st.info("This app is developed by The Analysts Hive, aiming to classify tweets on climate change into different sentiments. It serves as a tool for raising awareness about climate change and understanding public sentiment on this critical issue.")
-        
+        st.markdown(company_description)
+
+
+
 
         # Adding an image
         image_paths = ['resources/imgs/onneile.jpg', 'resources/imgs/masego.jpg', 'resources/imgs/mpho.jpg', 'resources/imgs/minnie.jpg', 'resources/imgs/zinhle.jpg', ]  # Make sure to use the correct path or URL to your image
