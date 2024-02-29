@@ -64,20 +64,28 @@ def main():
         # Creating a text box for user input
         tweet_text = st.text_area("Enter Text", "Type Here")
 
-         # Model selection
-        model_options = ["Logistic_Regression", "*To be named*", "*To be named*"]
+        # Model selection
+        model_options = ["Logistic_Regression", "SVM_model", "Random_Forest"]
         model_choice = st.selectbox("Select Model", model_options)
-
 
         if st.button("Classify"):
             # Transforming user input with vectorizer
             vect_text = tweet_cv.transform([tweet_text]).toarray()
+        
+            # Dictionary to map model choice to pickle file
+            model_files = {
+                "Logistic_Regression": "logistic_regression_model.pkl",
+                "SVM_model": "SVM_model.pkl",
+                "Random_Forest": "Random_Forest_model.pkl"
+            }
+        
             # Load your .pkl file with the model of your choice + make predictions
-            predictor = joblib.load(open(os.path.join("resources/logistic_regression_model.pkl"), "rb"))
+            model_file = model_files.get(model_choice, "logistic_regression_model.pkl")  # Default to logistic regression if not found
+            predictor = joblib.load(open(os.path.join("resources", model_file), "rb"))
             prediction = predictor.predict(vect_text)
 
             # When model has successfully run, will print prediction
-            st.success("Text Categorized as: {}".format(prediction))
+            st.success(f"Text Categorized as: {prediction}")
 
     # Handle the new "About" selection
     if selection == "About":
