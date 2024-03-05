@@ -114,8 +114,8 @@ def main():
             # When model has successfully run, will print prediction
             st.success(f"Text Categorized as: {prediction}")
 
-<<<<<<< HEAD
     #Adding 'EDA' dropdown
+            
     if selection == "Visualising Data":
          
          st.title('Exploratory Data Analysis (EDA)')
@@ -127,36 +127,6 @@ def main():
          
          st.markdown('Plotting a pie chart to visualize the proportion of each sentiment category in the dataset. This can provide a clear overview of the overall sentiment distribution. Between the two sentiment, 1 (Pro) and -1 (Anti). We can see that more tweets supports the belief of man-made climate change Pro (1) than the Anti (-1) and then the tweets that does not believe in man-made climate change Anti (-1) shows that are less than the Pro (1)')
 
-=======
-    # Handle the new "EDA" selection
-    if selection == "EDA":
-        st.title("Exploratory Data Analysis (EDA)")
-        st.info("Visual Insights into the Dataset")
-        
-        # Placeholder for images
-        graph_image_paths = [
-            "resources/imgs/dist_sent.png",  # Replace these paths with actual paths to your images
-            "resources/imgs/twt_dist_sent.png",
-            "resources/imgs/top20common.png",
-            "resources/imgs/wordcloud.png",
-            "resources/imgs/sent_msg.png",
-            "resources/imgs/sent_pie_chart.png",
-        ]
-
-        # Placeholder for captions - modify these with actual captions for your graphs
-        graph_captions = [
-            "Distribution of Sentiments",
-            "Tweet Length Distribution by Sentiment",
-            "Top 20 Most Common Words",
-            "Word Cloud",
-            "Sentiment by Message Length",
-            "Sentiment Pie Chart"
-        ]
-
-        # Displaying images with captions
-        for path, caption in zip(graph_image_paths, graph_captions):
-            st.image(path, caption=caption, use_column_width=True)
->>>>>>> c0260d2c6859774a503322cdffb0a5e54670033a
 
     # Handle the new "About" selection
     if selection == "About":
