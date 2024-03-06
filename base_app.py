@@ -55,10 +55,10 @@ def main():
         st.image(logo_image, caption='Twitter image', use_column_width=True)
 
         st.info("General Information")
-        st.info( ' • Testing data is used to determine the performance of the trained model, whereas training data is used to train the machine learning model.'
-                 ' • Training data is the power that supplies the model in machine learning, it is larger than testing data. Because more data helps to more effective predictive models.' 
-                 ' • When a machine learning algorithm receives data from our records, it recognizes patterns and creates a decision-making model.'
-                 ' • To avoid overfitting, it essential to use separate training and testing data. When a machine learning model learns the training data too well, it becomes hard to generalize to new data. This may happen if the training data is insufficient or not representative of the real-world data on which the model will be used.')
+        st.info('• Testing data is used to determine the performance of the trained model, whereas training data is used to train the machine learning model.')
+        st.info('• Training data is the power that supplies the model in machine learning, it is larger than testing data. Because more data helps to more effective predictive models.') 
+        st.info('• When a machine learning algorithm receives data from our records, it recognizes patterns and creates a decision-making model.')
+        st.info('• To avoid overfitting, it essential to use separate training and testing data. When a machine learning model learns the training data too well, it becomes hard to generalize to new data. This may happen if the training data is insufficient or not representative of the real-world data on which the model will be used.')
 
         # You can read a markdown file from supporting resources folder
         st.markdown("Some information here")
@@ -116,17 +116,34 @@ def main():
 
     #Adding 'EDA' dropdown
             
-    if selection == "Visualising Data":
-         
-         st.title('Exploratory Data Analysis (EDA)')
-         
-         st.subheader('Sentiments Distribution')
+    # Handle the new "EDA" selection
+    if selection == "EDA":
+        st.title("Exploratory Data Analysis (EDA)")
+        st.info("Visual Insights into the Dataset")
 
-         Pie_path = "resources/imgs/piechart.png"
-         st.image(Pie_path, caption='Pie chart', use_column_width=True)
-         
-         st.markdown('Plotting a pie chart to visualize the proportion of each sentiment category in the dataset. This can provide a clear overview of the overall sentiment distribution. Between the two sentiment, 1 (Pro) and -1 (Anti). We can see that more tweets supports the belief of man-made climate change Pro (1) than the Anti (-1) and then the tweets that does not believe in man-made climate change Anti (-1) shows that are less than the Pro (1)')
+        # Placeholder for images
+        graph_image_paths = [
+            "resources/imgs/dist_sent.png",  # Replace these paths with actual paths to your images
+            "resources/imgs/twt_dist_sent.png",
+            "resources/imgs/top20common.png",
+            "resources/imgs/wordcloud.png",
+            "resources/imgs/sent_msg.png",
+            "resources/imgs/piechart.png",
+        ]
 
+        # Placeholder for captions - modify these with actual captions for your graphs
+        graph_captions = [
+            "Distribution of Sentiments",
+            "Tweet Length Distribution by Sentiment",
+            "Top 20 Most Common Words",
+            "Word Cloud",
+            "Sentiment by Message Length",
+            "Sentiment Pie Chart"
+        ]
+
+        # Displaying images with captions
+        for path, caption in zip(graph_image_paths, graph_captions):
+            st.image(path, caption=caption, use_column_width=True)
 
     # Handle the new "About" selection
     if selection == "About":
