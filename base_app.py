@@ -26,6 +26,7 @@ import joblib, os
 
 # Data dependencies
 import pandas as pd
+import numpy as np
 
 # Vectorizer
 news_vectorizer = open("resources/count_vectorizer.pkl", "rb")
@@ -58,6 +59,7 @@ def main():
         st.info('• Testing data is used to determine the performance of the trained model, whereas training data is used to train the machine learning model.')
         st.info('• Training data is the power that supplies the model in machine learning, it is larger than testing data. Because more data helps to more effective predictive models.') 
         st.info('• When a machine learning algorithm receives data from our records, it recognizes patterns and creates a decision-making model.')
+        
         st.info('• To avoid overfitting, it essential to use separate training and testing data. When a machine learning model learns the training data too well, it becomes hard to generalize to new data. This may happen if the training data is insufficient or not representative of the real-world data on which the model will be used.')
 
         # You can read a markdown file from supporting resources folder
@@ -69,19 +71,18 @@ def main():
         
         st.subheader("Class Description")
         if st.checkbox('Classes'):
-            st.write('These classes are categorizations used to classify tweets based on their content regarding climate change:'
+            st.write('These classes are categorizations used to classify tweets based on their content regarding climate change:')
+
+            st.write('• News (Class 2): Tweets falling into this category provide factual news about climate change. These tweets are important as they disseminate accurate and up-to-date information about climate-related events, scientific findings, policy changes, and other significant developments. They help educate the public and raise awareness about the realities and impacts of climate change.')
 
                    
-                   '• News (Class 2): Tweets falling into this category provide factual news about climate change. These tweets are important as they disseminate accurate and up-to-date information about climate-related events, scientific findings, policy changes, and other significant developments. They help educate the public and raise awareness about the realities and impacts of climate change.'
+            st.write('• Pro (Class 1): Tweets categorized as "Pro" support the belief in man-made climate change. They may advocate for actions to address climate change, highlight the scientific consensus on the issue, or promote sustainable practices. These tweets play a crucial role in fostering public understanding and acceptance of the reality of anthropogenic climate change. They contribute to building momentum for collective action and policy initiatives aimed at mitigating climate change.')
 
                    
-                   '• Pro (Class 1): Tweets categorized as "Pro" support the belief in man-made climate change. They may advocate for actions to address climate change, highlight the scientific consensus on the issue, or promote sustainable practices. These tweets play a crucial role in fostering public understanding and acceptance of the reality of anthropogenic climate change. They contribute to building momentum for collective action and policy initiatives aimed at mitigating climate change.'
+            st.write('• Neutral (Class 0): Tweets labeled as "Neutral" neither support nor refute the belief in man-made climate change. While they may mention climate-related topics, they do not explicitly take a stance on the issue. These tweets are important for providing balanced perspectives and fostering open dialogue about climate change. They offer opportunities for individuals to engage in discussions, share diverse viewpoints, and critically evaluate information.')
 
                    
-                   '• Neutral (Class 0): Tweets labeled as "Neutral" neither support nor refute the belief in man-made climate change. While they may mention climate-related topics, they do not explicitly take a stance on the issue. These tweets are important for providing balanced perspectives and fostering open dialogue about climate change. They offer opportunities for individuals to engage in discussions, share diverse viewpoints, and critically evaluate information.'
-
-                   
-                   '• Anti (Class -1): Tweets categorized as "Anti" express disbelief in man-made climate change. They may deny the existence of climate change, challenge the scientific consensus, or oppose climate-related policies and initiatives. While these tweets represent dissenting views, they can also contribute to misinformation and confusion surrounding climate change. It is important to critically assess and address misinformation to ensure that accurate information prevails in public discourse.')
+            st.write('• Anti (Class -1): Tweets categorized as "Anti" express disbelief in man-made climate change. They may deny the existence of climate change, challenge the scientific consensus, or oppose climate-related policies and initiatives. While these tweets represent dissenting views, they can also contribute to misinformation and confusion surrounding climate change. It is important to critically assess and address misinformation to ensure that accurate information prevails in public discourse.')
 
 
 
@@ -92,7 +93,20 @@ def main():
         tweet_text = st.text_area("Enter Text", "Type Here")
 
         # Model selection
-        model_options = ["Logistic_Regression", "SVM_model", "Random_Forest"]
+        model_options = [
+    "Logistic_Regression",
+    "Random_Forest",
+    "SVM_model",
+    "SGDClassifier_default",
+    "SGDClassifier_log",  # Logistic regression with SGD training
+    "DecisionTreeClassifier",
+    "AdaBoostClassifier",
+    "GradientBoostingClassifier",
+    "MultinomialNB",
+    "LinearSVC_default",
+    "LinearSVC_C"  # Adjusted regularization
+]
+
         model_choice = st.selectbox("Select Model", model_options)
 
         if st.button("Classify"):
@@ -101,18 +115,106 @@ def main():
         
             # Dictionary to map model choice to pickle file
             model_files = {
-                "Logistic_Regression": "logistic_regression_model.pkl",
-                "SVM_model": "SVM_model.pkl",
-                "Random_Forest": "Random_Forest_model.pkl"
-            }
+    "Logistic_Regression": "Logistic_Regression.pkl",
+    "SVM_model": "SVM_model.pkl",
+    "Random_Forest": "Random_Forest.pkl",
+    "SGDClassifier_default": "SGDClassifier_default.pkl",
+    "SGDClassifier_log": "SGDClassifier_log.pkl",  # Logistic regression with SGD training
+    "DecisionTreeClassifier": "DecisionTreeClassifier.pkl",
+    "AdaBoostClassifier": "AdaBoostClassifier.pkl",
+    "GradientBoostingClassifier": "GradientBoostingClassifier.pkl",
+    "MultinomialNB": "MultinomialNB.pkl",
+    "LinearSVC_default": "LinearSVC_default.pkl",
+    "LinearSVC_C": "LinearSVC_C.pkl"  # Adjusted regularization
+}
         
             # Load your .pkl file with the model of your choice + make predictions
-            model_file = model_files.get(model_choice, "logistic_regression_model.pkl")  # Default to logistic regression if not found
-            predictor = joblib.load(open(os.path.join("resources", model_file), "rb"))
-            prediction = predictor.predict(vect_text)
+            # Define a dictionary to map numeric predictions to descriptive titles
+            prediction_titles = {
+                2: "News: the tweet links to factual news about climate change",
+                1: "Pro: the tweet supports the belief of man-made climate change",
+                0: "Neutral: the tweet neither supports nor refutes the belief of man-made climate change",
+                -1: "Anti: the tweet does not believe in man-made climate change"
+        }
 
-            # When model has successfully run, will print prediction
-            st.success(f"Text Categorized as: {prediction}")
+            # Load the model based on the user's choice
+            model_file = model_files.get(model_choice, "Logistic_Regression.pkl")  # Default to logistic regression if not found
+            predictor = joblib.load(open(os.path.join("resources", model_file), "rb"))
+
+            # Predict using the vectorized text
+            prediction = predictor.predict(vect_text)[0]  # Assuming vect_text is defined and prepared earlier
+
+            # Map the numeric prediction to its descriptive title
+            prediction_title = prediction_titles.get(prediction, "Unknown category")
+
+            # When model has successfully run, display the descriptive title of the prediction
+            st.success(f"{prediction_title}")
+
+        if st.button("👑 Combined Models Vote"):
+            vect_text = tweet_cv.transform([tweet_text]).toarray()
+
+            # Dictionary to map model choice to pickle file
+            model_files = {
+    "Logistic_Regression": "Logistic_Regression.pkl",
+    "SVM_model": "SVM_model.pkl",
+    "Random_Forest": "Random_Forest.pkl",
+    "SGDClassifier_default": "SGDClassifier_default.pkl",
+    "SGDClassifier_log": "SGDClassifier_log.pkl",  # Logistic regression with SGD training
+    "DecisionTreeClassifier": "DecisionTreeClassifier.pkl",
+    "AdaBoostClassifier": "AdaBoostClassifier.pkl",
+    "GradientBoostingClassifier": "GradientBoostingClassifier.pkl",
+    "MultinomialNB": "MultinomialNB.pkl",
+    "LinearSVC_default": "LinearSVC_default.pkl",
+    "LinearSVC_C": "LinearSVC_C.pkl"  # Adjusted regularization
+}
+            
+            # Define the percentage dominance of each model
+            model_dominance = {
+    "Logistic_Regression": 9.63,
+    "Random_Forest": 8.89,
+    "SVM_model": 9.81,
+    "SGDClassifier_default": 9.83,
+    "SGDClassifier_log": 9.40,
+    "DecisionTreeClassifier": 8.19,
+    "AdaBoostClassifier": 8.10,
+    "GradientBoostingClassifier": 8.44,
+    "MultinomialNB": 8.08,
+    "LinearSVC_default": 9.79,
+    "LinearSVC_C": 9.85
+}
+
+            # Define prediction titles
+            prediction_titles = {
+    2: "News: the tweet links to factual news about climate change",
+    1: "Pro: the tweet supports the belief of man-made climate change",
+    0: "Neutral: the tweet neither supports nor refutes the belief of man-made climate change",
+    -1: "Anti: the tweet does not believe in man-made climate change"
+}
+
+            # Assuming 'vect_text' is the vectorized input text prepared for prediction
+            predictions = []
+            weights = []
+
+            # Load and predict with each model
+            for model_name, model_file in model_files.items():
+                model = joblib.load(f"resources/{model_file}")
+                prediction = model.predict(vect_text)[0]  # Assuming the input is already vectorized
+                predictions.append(prediction)
+                # Append the model's dominance as its weight
+                weights.append(model_dominance[model_name])
+
+            # Weighted vote calculation
+            weighted_predictions = np.average(predictions, weights=weights)
+
+            # Since we cannot have fractional predictions, find the nearest integer prediction
+            final_prediction = round(weighted_predictions)
+
+            # Map the numeric prediction to its descriptive title
+            final_prediction_title = prediction_titles.get(final_prediction, "Unknown category")
+
+            # Display the final prediction
+            st.success(f"The most voted result was: {final_prediction_title}")
+
 
     #Adding 'EDA' dropdown
             
