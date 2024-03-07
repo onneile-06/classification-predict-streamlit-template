@@ -233,18 +233,30 @@ def main():
             "resources/imgs/piechart.png",
         ]
 
-        # Placeholder for captions - modify these with actual captions for your graphs
+        # Define captions for each graph
         graph_captions = [
             "Distribution of Sentiments",
             "Tweet Length Distribution by Sentiment",
             "Top 20 Most Common Words",
             "Word Cloud",
             "Sentiment by Message Length",
-            "Sentiment Pie Chart"
+            "F1 Scores of Models"
         ]
 
-        # Displaying images with captions
-        for path, caption in zip(graph_image_paths, graph_captions):
+        # Define descriptions for each graph
+        graph_descriptions = [
+            """This bar plot visualizes the distribution of sentiments across the dataset, providing insight into the general sentiment towards climate change among Twitter users.""",
+            """The histogram shows the distribution of tweet lengths, categorized by sentiment. This reveals if the length of a tweet correlates with its sentiment, potentially indicating the depth of views expressed.""",
+            """After removing stopwords, this plot highlights the frequency of the remaining words, showing the most common terms used in the dataset and shedding light on key topics discussed.""",
+            """The word cloud artistically represents the most frequent terms after preprocessing, emphasizing dominant themes and topics within the climate change conversation on Twitter.""",
+            """A boxplot that shows the distribution of message lengths for each sentiment category, indicating whether more detailed arguments are associated with specific sentiments towards climate change.""",
+            """The pie chart represents the weighted F1 scores of various machine learning models, helping in identifying the most effective model for classifying tweets based on their sentiment towards climate change."""
+        ]
+
+        # Displaying descriptions, images, and captions
+        for description, path, caption in zip(graph_descriptions, graph_image_paths, graph_captions):
+            st.markdown("### " + caption)
+            st.markdown(description)
             st.image(path, caption=caption, use_column_width=True)
 
     # Handle the new "About" selection
